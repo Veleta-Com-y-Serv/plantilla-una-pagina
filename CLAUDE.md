@@ -40,3 +40,5 @@ Antes de dar una orden por buena: `npm run build` sin errores.
 - `hero.titulo_destacado`: final del titular en degradado. `hero.items`: cifras (`titulo` = cifra).
 - `ventajas.items`: la primera tarjeta sale grande.
 - Menú con anclas `/#id-de-sección`; es una landing de una sola página.
+
+Fotos de partida en public/fotos/ (generadas con IA, sin derechos de terceros); los SVG de public/placeholders/ siguen de respaldo.

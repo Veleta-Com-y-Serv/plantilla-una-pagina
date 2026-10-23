@@ -38,7 +38,7 @@ secciones:
     titulo: Tu tejado ya paga
     titulo_destacado: tu factura de luz.   # parte del titular en degradado
     texto: "Estudiamos tu consumo, instalamos y tramitamos las ayudas. Tú solo ves bajar la factura."
-    imagen: /placeholders/hero.svg
+    imagen: /fotos/hero.jpg
     cta: { texto: Calcula tu ahorro, url: "/#contacto" }
     cta_secundario: { texto: Cómo trabajamos, url: "/#servicios" }
     items:
