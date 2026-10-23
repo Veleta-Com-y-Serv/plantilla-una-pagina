@@ -6,7 +6,7 @@ sectores: [cualquiera]
 secciones: [hero, ventajas, servicios, cta, contacto]
 estilo: moderno
 plan_minimo: gratis
-version: 1.1.0
+version: 1.2.0
 base: astrowind
 demo_url: https://demo-plantilla-una-pagina.noexpertise.com
 activa: true
