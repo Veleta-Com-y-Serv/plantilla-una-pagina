@@ -1,6 +1,7 @@
 # Contenido de la web. Es lo único que rellena la plataforma NoExpertise.
 # Landing de una sola página: el menú apunta a anclas (#id-de-sección).
 # Las secciones se muestran en el orden de este fichero. Para ocultar una: activa: false.
+# Apartado nuevo: un id propio (es su ancla, /#id) con `tipo:` = el diseño de otra sección o `texto`.
 nombre: Solaria Aragón
 eslogan: Placas solares para casas y naves en Zaragoza. Llave en mano.
 sector: energia
