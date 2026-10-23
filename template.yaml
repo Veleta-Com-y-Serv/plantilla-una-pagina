@@ -1,0 +1,13 @@
+# Metadatos de la plantilla para el catálogo de NoExpertise.
+id: una-pagina
+nombre: Una sola página
+descripcion: Landing moderna de una sola página para presentar un servicio y conseguir contactos.
+sectores: [cualquiera]
+secciones: [hero, ventajas, servicios, cta, contacto]
+estilo: moderno
+plan_minimo: gratis
+version: 1.0.0
+base: astrowind
+demo_url: https://demo-plantilla-una-pagina.noexpertise.com
+activa: true
+orden: 40

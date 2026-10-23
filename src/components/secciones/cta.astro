@@ -1,0 +1,24 @@
+---
+// Llamada a la acción: banda con degradado y un solo botón.
+import { seccion } from '../../data/site';
+import Seccion from '../ui/Seccion.astro';
+interface Props { id: string }
+const s = seccion(Astro.props.id);
+---
+
+{
+  s && (
+    <Seccion id={Astro.props.id}>
+      <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primario to-acento px-6 py-14 text-center text-[#0b1020] md:px-16 md:py-20">
+        <div class="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_1px_1px,#0b1020_1px,transparent_0)] [background-size:22px_22px]" aria-hidden="true" />
+        <h2 class="relative mx-auto max-w-3xl text-[clamp(2rem,6vw,3.6rem)]">{s.titulo}</h2>
+        {s.texto && <p class="relative mx-auto mt-4 max-w-xl text-lg font-medium opacity-80">{s.texto}</p>}
+        {s.cta && (
+          <a href={s.cta.url} class="btn relative mt-8 !bg-[#0b1020] !bg-none text-white shadow-none">
+            {s.cta.texto}
+          </a>
+        )}
+      </div>
+    </Seccion>
+  )
+}

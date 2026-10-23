@@ -1,0 +1,20 @@
+---
+// Página principal: pinta las secciones activas de site.yaml, en su orden.
+// Cada sección es src/components/secciones/<id>.astro. Para quitar una: `activa: false` en site.yaml.
+import Base from '../layouts/Base.astro';
+import { seccionesActivas } from '../data/site';
+
+const modulos = import.meta.glob<{ default: any }>('../components/secciones/*.astro', { eager: true });
+const componentes: Record<string, any> = {};
+for (const [ruta, m] of Object.entries(modulos)) componentes[ruta.split('/').pop()!.replace('.astro', '')] = m.default;
+const ids = seccionesActivas().filter((id) => componentes[id]);
+---
+
+<Base>
+  {
+    ids.map((id, i) => {
+      const Componente = componentes[id];
+      return <Componente id={id} primera={i === 0} />;
+    })
+  }
+</Base>

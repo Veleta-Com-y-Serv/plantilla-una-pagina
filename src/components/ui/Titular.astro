@@ -1,0 +1,16 @@
+---
+// Titular de sección (antetítulo + título + texto). Adaptado de AstroWind (Headline.astro), © onWidget, MIT.
+interface Props { titulo?: string; antetitulo?: string; texto?: string; alinear?: 'izquierda' | 'centro'; class?: string; nivel?: 1 | 2 }
+const { titulo, antetitulo, texto, alinear = 'izquierda', class: clase = '', nivel = 2 } = Astro.props;
+const H = nivel === 1 ? 'h1' : 'h2';
+---
+
+{
+  (titulo || antetitulo || texto) && (
+    <div class:list={['titular', { 'titular--centro': alinear === 'centro' }, clase]}>
+      {antetitulo && <p class="antetitulo">{antetitulo}</p>}
+      {titulo && <H class="titulo-seccion">{titulo}</H>}
+      {texto && <p class="titular-texto">{texto}</p>}
+    </div>
+  )
+}

@@ -1,0 +1,31 @@
+---
+// Servicios en filas grandes con número y flecha.
+import { seccion } from '../../data/site';
+import Seccion from '../ui/Seccion.astro';
+import Titular from '../ui/Titular.astro';
+import Icono from '../ui/Icono.astro';
+interface Props { id: string }
+const s = seccion(Astro.props.id);
+---
+
+{
+  s && (
+    <Seccion id={Astro.props.id}>
+      <div class="grid gap-10 md:grid-cols-3">
+        <Titular class="md:sticky md:top-28 md:self-start" antetitulo={s.antetitulo} titulo={s.titulo} texto={s.texto} />
+        <ol class="md:col-span-2">
+          {s.items.map((it, i) => (
+            <li class="group grid grid-cols-[auto_1fr] gap-x-5 border-t border-texto/10 py-7 md:grid-cols-[5rem_1fr_auto] md:items-center">
+              <span class="font-display text-sm font-bold opacity-50 md:text-base">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3 class="text-2xl md:text-3xl">{it.titulo}</h3>
+                {it.texto && <p class="mt-2 max-w-xl opacity-65">{it.texto}</p>}
+              </div>
+              <Icono nombre="flecha" class="hidden text-acento transition-transform group-hover:translate-x-1 md:block" tam={28} />
+            </li>
+          ))}
+        </ol>
+      </div>
+    </Seccion>
+  )
+}

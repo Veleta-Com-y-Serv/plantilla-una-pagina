@@ -1,0 +1,42 @@
+---
+// Hero moderno: titular enorme con parte en degradado (`titulo_destacado`), cifras y una imagen con halo.
+import { seccion } from '../../data/site';
+import Imagen from '../ui/Imagen.astro';
+interface Props { id: string; primera?: boolean }
+const { id, primera = false } = Astro.props;
+const s = seccion(id);
+const destacado = (s?.titulo_destacado as string) || '';
+---
+
+{
+  s && (
+    <section id={id} class="relative overflow-hidden">
+      <div class="pointer-events-none absolute -top-40 left-1/2 h-[36rem] w-[36rem] -translate-x-1/2 rounded-full bg-primario/25 blur-[120px]" aria-hidden="true" />
+      <div class="contenedor relative pt-16 pb-12 text-center md:pt-28">
+        {s.antetitulo && <p class="antetitulo">{s.antetitulo}</p>}
+        <h1 class="mx-auto mt-5 max-w-5xl text-[clamp(2.6rem,9vw,6rem)]">
+          {`${s.titulo} `}{destacado && <span class="degradado-texto">{destacado}</span>}
+        </h1>
+        {s.texto && <p class="mx-auto mt-6 max-w-2xl text-lg opacity-70 md:text-xl">{s.texto}</p>}
+        <div class="mt-9 flex flex-wrap justify-center gap-3">
+          {s.cta && <a class="btn" href={s.cta.url}>{s.cta.texto}</a>}
+          {s.cta_secundario && <a class="btn-sec" href={s.cta_secundario.url}>{s.cta_secundario.texto}</a>}
+        </div>
+        {s.items.length > 0 && (
+          <dl class="mx-auto mt-14 grid max-w-3xl grid-cols-3 gap-4">
+            {s.items.map((d) => (
+              <div>
+                <dt class="font-display text-3xl font-extrabold tracking-tight md:text-5xl">{d.titulo}</dt>
+                <dd class="mt-1 text-xs opacity-60 md:text-sm">{d.texto}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        <div class="relative mx-auto mt-14 max-w-5xl">
+          <div class="absolute -inset-1 rounded-[1.8rem] bg-gradient-to-r from-primario to-acento opacity-60 blur-xl" aria-hidden="true" />
+          <Imagen src={s.imagen} alt="" ancho={1600} alto={1000} prioridad={primera} class="relative aspect-[16/10] w-full rounded-[1.5rem] object-cover" />
+        </div>
+      </div>
+    </section>
+  )
+}

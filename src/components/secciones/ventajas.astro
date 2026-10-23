@@ -1,0 +1,29 @@
+---
+// Ventajas en «bento»: la primera tarjeta ocupa el doble.
+import { seccion } from '../../data/site';
+import Seccion from '../ui/Seccion.astro';
+import Titular from '../ui/Titular.astro';
+import Icono from '../ui/Icono.astro';
+interface Props { id: string }
+const s = seccion(Astro.props.id);
+---
+
+{
+  s && (
+    <Seccion id={Astro.props.id}>
+      <Titular antetitulo={s.antetitulo} titulo={s.titulo} texto={s.texto} />
+      <ul class="grid gap-4 md:grid-cols-3">
+        {s.items.map((it, i) => (
+          <li class:list={['cristal relative overflow-hidden p-7', { 'md:col-span-2 md:row-span-2 md:p-10': i === 0 }]}>
+            {i === 0 && <div class="absolute -right-16 -bottom-16 h-64 w-64 rounded-full bg-acento/20 blur-3xl" aria-hidden="true" />}
+            <span class="relative grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-primario to-acento text-[#0b1020]">
+              <Icono nombre={it.icono} />
+            </span>
+            <h3 class:list={['relative mt-6', i === 0 ? 'text-3xl md:text-4xl' : 'text-xl']}>{it.titulo}</h3>
+            {it.texto && <p class:list={['relative mt-3 opacity-70', { 'max-w-md text-lg': i === 0 }]}>{it.texto}</p>}
+          </li>
+        ))}
+      </ul>
+    </Seccion>
+  )
+}

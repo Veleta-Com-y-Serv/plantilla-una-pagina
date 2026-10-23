@@ -1,0 +1,81 @@
+# Contenido de la web. Es lo único que rellena la plataforma NoExpertise.
+# Landing de una sola página: el menú apunta a anclas (#id-de-sección).
+# Las secciones se muestran en el orden de este fichero. Para ocultar una: activa: false.
+nombre: Solaria Aragón
+eslogan: Placas solares para casas y naves en Zaragoza. Llave en mano.
+sector: energia
+logo: ""          # ruta a una imagen en public/ (p. ej. /logo.svg). Vacío = nombre en texto.
+colores:
+  primario: "#ff6b2c"
+  acento: "#ffd23f"
+  fondo: "#0b1020"
+  texto: "#e8ecf5"
+contacto:
+  telefono: "876 54 21 30"
+  email: hola@solaria-aragon.es
+  direccion: Polígono Malpica, calle D 12, 50016 Zaragoza
+  horario: "Lunes a viernes, de 8:00 a 18:00."
+  whatsapp: "+34 611 54 21 30"
+redes:
+  instagram: https://www.instagram.com/
+  facebook: ""
+  linkedin: https://www.linkedin.com/
+menu:
+  - { texto: Ventajas, url: "/#ventajas" }
+  - { texto: Servicios, url: "/#servicios" }
+  - { texto: Contacto, url: "/#contacto" }
+boton_cabecera: { texto: Pide presupuesto, url: "/#contacto" }
+seo:
+  titulo: Solaria Aragón · Placas solares en Zaragoza
+  descripcion: "Instalamos placas solares en viviendas, comunidades y naves de Zaragoza. Estudio gratis, subvenciones tramitadas y garantía de 25 años."
+  tipo: LocalBusiness
+marca_pie: true
+
+secciones:
+  hero:
+    activa: true
+    antetitulo: Energía solar en Zaragoza
+    titulo: Tu tejado ya paga
+    titulo_destacado: tu factura de luz.   # parte del titular en degradado
+    texto: "Estudiamos tu consumo, instalamos y tramitamos las ayudas. Tú solo ves bajar la factura."
+    imagen: /placeholders/hero.svg
+    cta: { texto: Calcula tu ahorro, url: "/#contacto" }
+    cta_secundario: { texto: Cómo trabajamos, url: "/#servicios" }
+    items:
+      - { titulo: "−60 %", texto: en la factura de luz }
+      - { titulo: "1.200", texto: instalaciones hechas }
+      - { titulo: "25 años", texto: de garantía en paneles }
+
+  ventajas:
+    activa: true
+    antetitulo: Por qué Solaria
+    titulo: Sin letra pequeña. Sin sorpresas.
+    items:
+      - { titulo: Estudio gratis en 48 horas, texto: "Miramos tu tejado por satélite y tu factura. Te damos un presupuesto cerrado con el ahorro real.", icono: sol }
+      - { titulo: Ayudas tramitadas, texto: "Nos ocupamos de la bonificación del IBI y las subvenciones.", icono: euro }
+      - { titulo: Instalación en un día, texto: "Equipo propio. Sin subcontratas.", icono: rayo }
+      - { titulo: App de seguimiento, texto: "Ves en el móvil cuánto produces y cuánto ahorras.", icono: grafico }
+      - { titulo: Mantenimiento incluido, texto: "Revisión anual el primer lustro.", icono: herramienta }
+
+  servicios:
+    activa: true
+    antetitulo: Servicios
+    titulo: Lo que instalamos
+    texto: "Para casas, comunidades de vecinos y empresas."
+    items:
+      - { titulo: Autoconsumo para viviendas, texto: "De 6 a 12 paneles, con o sin batería. Compensación de excedentes." }
+      - { titulo: Comunidades de vecinos, texto: "Autoconsumo compartido: cada vecino ahorra según su cuota." }
+      - { titulo: Naves e industria, texto: "Instalaciones de 20 a 500 kW con estudio de amortización." }
+      - { titulo: Baterías y cargadores, texto: "Guarda la energía para la noche y carga tu coche eléctrico." }
+
+  cta:
+    activa: true
+    titulo: ¿Cuánto ahorrarías tú?
+    texto: "Mándanos una foto de tu factura y te lo decimos en 48 horas. Gratis."
+    cta: { texto: Quiero saberlo, url: "/#contacto" }
+
+  contacto:
+    activa: true
+    antetitulo: Contacto
+    titulo: Hablemos de tu tejado
+    texto: "Déjanos tus datos y te llamamos. O escríbenos directamente."

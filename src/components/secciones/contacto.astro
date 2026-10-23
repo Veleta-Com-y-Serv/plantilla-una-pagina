@@ -1,0 +1,38 @@
+---
+// Contacto: titular grande y contacto directo a la izquierda; formulario en tarjeta de cristal a la derecha.
+import { seccion, site, tel, whatsapp } from '../../data/site';
+import Seccion from '../ui/Seccion.astro';
+import Titular from '../ui/Titular.astro';
+import Icono from '../ui/Icono.astro';
+import FormularioContacto from '../ui/FormularioContacto.astro';
+interface Props { id: string }
+const s = seccion(Astro.props.id);
+const c = site.contacto;
+---
+
+{
+  s && (
+    <Seccion id={Astro.props.id}>
+      <div class="grid gap-10 md:grid-cols-2 md:gap-16">
+        <div>
+          <Titular antetitulo={s.antetitulo} titulo={s.titulo} texto={s.texto} />
+          <ul class="grid gap-3">
+            {c.telefono && (
+              <li><a class="flex items-center gap-3 text-xl font-bold md:text-2xl" href={tel(c.telefono)}><Icono nombre="telefono" class="text-acento" />{c.telefono}</a></li>
+            )}
+            {c.whatsapp && (
+              <li><a class="flex items-center gap-3 text-lg" href={whatsapp(c.whatsapp)} rel="noopener" target="_blank"><Icono nombre="whatsapp" class="text-acento" />WhatsApp</a></li>
+            )}
+            {c.email && (
+              <li><a class="flex items-center gap-3 break-all text-lg" href={`mailto:${c.email}`}><Icono nombre="correo" class="shrink-0 text-acento" />{c.email}</a></li>
+            )}
+            {c.direccion && <li class="flex items-center gap-3 opacity-70"><Icono nombre="mapa" class="shrink-0 text-acento" />{c.direccion}</li>}
+          </ul>
+        </div>
+        <div class="cristal p-6 md:p-10">
+          <FormularioContacto boton="Quiero mi presupuesto" />
+        </div>
+      </div>
+    </Seccion>
+  )
+}

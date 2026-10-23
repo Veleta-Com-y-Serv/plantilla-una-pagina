@@ -1,0 +1,12 @@
+---
+// Envoltorio de sección. Adaptado de AstroWind (WidgetWrapper.astro), © onWidget, licencia MIT (LICENSE-ASTROWIND.md).
+// Da el id del ancla, el margen lateral de 16 px y el ritmo vertical del estilo.
+interface Props { id?: string; class?: string; contenedor?: string; as?: string; etiqueta?: string }
+const { id, class: clase = '', contenedor = '', as: Etiqueta = 'section', etiqueta } = Astro.props;
+---
+
+<Etiqueta class:list={['seccion', clase]} id={id} aria-label={etiqueta}>
+  <div class:list={['contenedor', contenedor]}>
+    <slot />
+  </div>
+</Etiqueta>
