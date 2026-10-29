@@ -6,8 +6,53 @@ sectores: [cualquiera]
 secciones: [hero, ventajas, servicios, cta, contacto]
 estilo: moderno
 plan_minimo: gratis
-version: 1.2.0
+version: 1.3.0
 base: astrowind
 demo_url: https://demo-plantilla-una-pagina.noexpertise.com
 activa: true
 orden: 40
+
+# Asistente de puesta en marcha (NoExpertise): un paso por pantalla. Rutas del site sin índices;
+# tipos: texto y lista (la IA propone), datos, fotos, eleccion (colores y logo) y repaso.
+asistente:
+  - id: negocio
+    titulo: "Tu negocio"
+    pregunta: "¿Cómo se llama tu negocio y qué ofreces?"
+    ayuda: "Qué haces, para quién y por qué elegirte."
+    tipo: texto
+    campos: [nombre, eslogan, secciones.hero.antetitulo, secciones.hero.titulo, secciones.hero.texto, secciones.hero.titulo_destacado, seo.descripcion]
+  - id: contacto
+    titulo: "Cómo te encuentran"
+    pregunta: "¿Dónde estáis y cómo os pueden llamar o escribir?"
+    ayuda: "Solo lo que quieras que vean tus clientes. Lo que dejes vacío no sale en tu web."
+    tipo: datos
+    campos: [contacto.telefono, contacto.whatsapp, contacto.email, contacto.direccion, contacto.horario, redes.instagram, redes.facebook]
+  - id: ventajas
+    titulo: "Por qué elegirte"
+    pregunta: "¿Qué te diferencia de los demás? Una idea por línea."
+    tipo: texto
+    campos: [secciones.ventajas.titulo, secciones.ventajas.items]
+  - id: servicios
+    titulo: "Servicios"
+    pregunta: "¿Qué servicios ofreces? Uno por línea."
+    tipo: texto
+    campos: [secciones.servicios.titulo, secciones.servicios.texto, secciones.servicios.items]
+  - id: llamada
+    titulo: "Llamada final"
+    pregunta: "¿Qué quieres que haga quien llega al final de tu web? Llamarte, pedir presupuesto, visitarte…"
+    tipo: texto
+    campos: [secciones.cta.titulo, secciones.cta.texto]
+  - id: fotos
+    titulo: "Tus fotos"
+    pregunta: "Pon una foto de portada."
+    ayuda: "Sube las tuyas o elige una del banco. Las que no cambies se quedan como están."
+    tipo: fotos
+    campos: [secciones.hero.imagen]
+  - id: aspecto
+    titulo: "Colores y logo"
+    pregunta: "Elige los colores de tu web y, si tienes, tu logo."
+    tipo: eleccion
+    campos: [colores.primario, colores.acento, logo]
+  - id: repaso
+    titulo: "Repaso"
+    tipo: repaso
