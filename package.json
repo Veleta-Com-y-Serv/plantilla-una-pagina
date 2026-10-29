@@ -1,6 +1,6 @@
 {
   "name": "plantilla-una-pagina",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Plantilla NoExpertise «Una sola página» basada en AstroWind (MIT)",
   "private": true,
   "type": "module",

@@ -3,10 +3,16 @@ id: una-pagina
 nombre: Una sola página
 descripcion: Landing moderna de una sola página para presentar un servicio y conseguir contactos.
 sectores: [cualquiera]
-secciones: [hero, ventajas, servicios, cta, contacto]
+secciones:
+  - { id: hero, nombre: Portada }
+  - { id: ventajas, nombre: Ventajas }
+  - { id: servicios, nombre: Servicios }
+  - { id: cta, nombre: Llamada a la acción }
+  - { id: preguntas, nombre: Preguntas frecuentes }
+  - { id: contacto, nombre: Contacto }
 estilo: moderno
 plan_minimo: gratis
-version: 1.3.0
+version: 1.4.0
 base: astrowind
 demo_url: https://demo-plantilla-una-pagina.noexpertise.com
 activa: true
@@ -42,6 +48,12 @@ asistente:
     pregunta: "¿Qué quieres que haga quien llega al final de tu web? Llamarte, pedir presupuesto, visitarte…"
     tipo: texto
     campos: [secciones.cta.titulo, secciones.cta.texto]
+  - id: preguntas
+    titulo: "Preguntas frecuentes"
+    pregunta: "¿Qué os preguntan más a menudo? Escribe cada pregunta y lo que respondéis."
+    ayuda: "Si lo prefieres, añádelos luego en Contenido."
+    tipo: lista
+    campos: [secciones.preguntas.preguntas]
   - id: fotos
     titulo: "Tus fotos"
     pregunta: "Pon una foto de portada."

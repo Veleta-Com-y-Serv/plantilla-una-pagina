@@ -2,6 +2,7 @@
 // Imagen con carga diferida por defecto. `prioridad` para la del hero (se carga al momento).
 interface Props { src?: string; alt?: string; ancho?: number; alto?: number; class?: string; prioridad?: boolean }
 const { src, alt = '', ancho = 800, alto = 600, class: clase = '', prioridad = false } = Astro.props;
+// `alt` vacío = foto decorativa (también aria-hidden). Las de contenido llevan su alt (src/lib/seo.ts: altHero, altFicha…).
 ---
 
 {
@@ -9,6 +10,7 @@ const { src, alt = '', ancho = 800, alto = 600, class: clase = '', prioridad = f
     <img
       src={src}
       alt={alt}
+      aria-hidden={alt === '' ? 'true' : undefined}
       width={ancho}
       height={alto}
       class={clase}

@@ -1,10 +1,11 @@
 ---
 // Layout base de la plantilla. NO TOCAR salvo orden explícita de diseño.
-// Pone el idioma, las metas SEO, los colores de site.yaml como variables CSS, la cabecera y el pie.
+// Pone el idioma, las metas SEO (src/lib/seo.ts: canónica, og, robots y JSON-LD), los colores de site.yaml como variables CSS, la cabecera y el pie.
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
+import { altHero, canonica, imagenCompartir, indexable, jsonLdNegocio, jsonLdPreguntas, jsonSeguro, urlBase } from '../lib/seo';
 
 interface Props { titulo?: string; descripcion?: string }
 const { titulo, descripcion } = Astro.props;
@@ -16,18 +17,12 @@ const title = titulo ? `${titulo} · ${site.nombre}` : site.seo.titulo;
 const description = descripcion ?? site.seo.descripcion;
 const c = site.colores;
 const variables = `--c-primario:${c.primario};--c-acento:${c.acento};--c-fondo:${c.fondo};--c-texto:${c.texto}`;
-const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
-const ld = {
-  '@context': 'https://schema.org',
-  '@type': site.seo.tipo || 'LocalBusiness',
-  name: site.nombre,
-  description: site.seo.descripcion,
-  ...(site.contacto.telefono && { telephone: site.contacto.telefono }),
-  ...(site.contacto.email && { email: site.contacto.email }),
-  ...(site.contacto.direccion && { address: site.contacto.direccion }),
-  ...(Astro.site && { url: Astro.site.href }),
-  sameAs: Object.values(site.redes).filter(Boolean),
-};
+// SEO de base (src/lib/seo.ts): dirección canónica (seo.url o SITE_URL), foto para compartir, indexación y JSON-LD.
+const base = urlBase(Astro.site);
+const canonical = canonica(Astro.url.pathname, base);
+const imagen = imagenCompartir(base);
+const ld = jsonLdNegocio(base, 'LocalBusiness');
+const ldPreguntas = Astro.url.pathname === '/' ? jsonLdPreguntas() : null;
 ---
 
 <!doctype html>
@@ -39,13 +34,19 @@ const ld = {
     <meta name="description" content={description} />
     <meta name="theme-color" content={c.primario} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {!indexable() && <meta name="robots" content="noindex, nofollow" />}
     {canonical && <link rel="canonical" href={canonical} />}
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content={site.nombre} />
-    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {imagen && <meta property="og:image" content={imagen} />}
+    {imagen && <meta property="og:image:alt" content={altHero()} />}
+    <meta name="twitter:card" content={imagen ? 'summary_large_image' : 'summary'} />
+    <script type="application/ld+json" set:html={jsonSeguro(ld)} />
+    {ldPreguntas && <script type="application/ld+json" set:html={jsonSeguro(ldPreguntas)} />}
   </head>
   <body>
     <a class="saltar" href="#contenido">Saltar al contenido</a>

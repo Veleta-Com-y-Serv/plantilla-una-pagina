@@ -75,6 +75,17 @@ secciones:
     texto: "Mándanos una foto de tu factura y te lo decimos en 48 horas. Gratis."
     cta: { texto: Quiero saberlo, url: "/#contacto" }
 
+  preguntas:
+    activa: true
+    antetitulo: Preguntas frecuentes
+    titulo: Lo que todo el mundo pregunta
+    preguntas:
+      - { pregunta: "¿Cuánto se tarda en tener las placas funcionando?", respuesta: "El estudio está en 48 horas y la instalación se hace en un día en la mayoría de viviendas. Los permisos los tramitamos nosotros." }
+      - { pregunta: "¿Quién se encarga de las ayudas?", respuesta: "Nosotros. Te decimos a qué ayudas puedes optar, como la bonificación del IBI de tu ayuntamiento, y presentamos los papeles por ti." }
+      - { pregunta: "¿Necesito batería?", respuesta: "No es obligatoria. Compensa si gastas sobre todo por la tarde y la noche; si no, suele bastar con la compensación de excedentes. Te lo decimos en el estudio." }
+      - { pregunta: "¿Y si mi tejado no da al sur?", respuesta: "También se puede. Con orientación este u oeste se produce algo menos, pero sigue saliendo a cuenta. Lo vemos en el estudio por satélite." }
+      - { pregunta: "¿Qué mantenimiento necesitan?", respuesta: "Muy poco: una limpieza de vez en cuando y una revisión al año, que va incluida los cinco primeros años." }
+
   contacto:
     activa: true
     antetitulo: Contacto

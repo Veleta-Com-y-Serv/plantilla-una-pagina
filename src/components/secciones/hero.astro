@@ -1,6 +1,7 @@
 ---
 // Hero moderno: titular enorme con parte en degradado (`titulo_destacado`), cifras y una imagen con halo.
 import { seccion } from '../../data/site';
+import { altHero } from '../../lib/seo';
 import Imagen from '../ui/Imagen.astro';
 interface Props { id: string; primera?: boolean }
 const { id, primera = false } = Astro.props;
@@ -34,7 +35,7 @@ const destacado = (s?.titulo_destacado as string) || '';
         )}
         <div class="relative mx-auto mt-14 max-w-5xl">
           <div class="absolute -inset-1 rounded-[1.8rem] bg-gradient-to-r from-primario to-acento opacity-60 blur-xl" aria-hidden="true" />
-          <Imagen src={s.imagen} alt="" ancho={1600} alto={1000} prioridad={primera} class="relative aspect-[16/10] w-full rounded-[1.5rem] object-cover" />
+          <Imagen src={s.imagen} alt={altHero()} ancho={1600} alto={1000} prioridad={primera} class="relative aspect-[16/10] w-full rounded-[1.5rem] object-cover" />
         </div>
       </div>
     </section>

@@ -39,7 +39,8 @@ export interface Site {
   contacto: { telefono: string; email: string; direccion: string; horario: string; whatsapp: string };
   redes: { instagram: string; facebook: string; linkedin: string };
   menu: Enlace[];
-  seo: { titulo: string; descripcion: string; tipo: string };
+  /** `url` e `indexable` los escribe la plataforma (opcionales: las webs antiguas no los traen). */
+  seo: { titulo: string; descripcion: string; tipo: string; url?: string; indexable?: boolean };
   boton_cabecera: Enlace | null;
   marca_pie: boolean;
   secciones: Record<string, Seccion>;
@@ -83,6 +84,8 @@ export const site: Site = {
     titulo: texto(d.seo?.titulo) || texto(d.nombre),
     descripcion: texto(d.seo?.descripcion) || texto(d.eslogan),
     tipo: texto(d.seo?.tipo) || 'LocalBusiness',
+    ...(texto(d.seo?.url) && { url: texto(d.seo?.url).replace(/\/+$/, '') }),
+    ...(typeof d.seo?.indexable === 'boolean' && { indexable: d.seo.indexable as boolean }),
   },
   boton_cabecera: d.boton_cabecera?.url ? (d.boton_cabecera as Enlace) : null,
   marca_pie: d.marca_pie !== false,

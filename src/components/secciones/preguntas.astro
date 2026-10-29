@@ -1,0 +1,39 @@
+---
+// Preguntas frecuentes: acordeón nativo <details> en tarjetas de cristal, sin JavaScript. Titular fijo a la
+// izquierda en escritorio, como los servicios. Campos: `preguntas[]` (pregunta, respuesta).
+// Sin preguntas no se pinta. También sirve de diseño para apartados nuevos (`tipo: preguntas`).
+import { seccion } from '../../data/site';
+import Seccion from '../ui/Seccion.astro';
+import Titular from '../ui/Titular.astro';
+interface Props { id: string }
+const s = seccion(Astro.props.id);
+const preguntas = s ? s.preguntas.filter((p) => p && p.pregunta) : [];
+---
+
+{
+  s && preguntas.length > 0 && (
+    <Seccion id={Astro.props.id}>
+      <div class="grid gap-10 md:grid-cols-3">
+        <Titular class="md:sticky md:top-28 md:self-start" antetitulo={s.antetitulo} titulo={s.titulo} texto={s.texto} />
+        <div class="grid gap-3 md:col-span-2">
+          {preguntas.map((p, i) => (
+            <details class="faq cristal px-6 md:px-8" open={i === 0}>
+              <summary class="flex items-center justify-between gap-5 py-6 text-lg font-bold md:text-xl">
+                {p.pregunta}
+                <span class="faq-signo grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primario to-acento text-xl text-[#0b1020]" aria-hidden="true"><span>+</span></span>
+              </summary>
+              {p.respuesta && <p class="max-w-2xl pb-7 opacity-70">{p.respuesta}</p>}
+            </details>
+          ))}
+        </div>
+      </div>
+    </Seccion>
+  )
+}
+
+<style>
+  .faq summary { list-style: none; cursor: pointer; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq-signo span { display: block; transition: transform 0.2s ease; }
+  .faq[open] .faq-signo span { transform: rotate(45deg); }
+</style>

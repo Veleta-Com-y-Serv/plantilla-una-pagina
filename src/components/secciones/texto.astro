@@ -2,6 +2,7 @@
 // Apartado de texto genérico: antetítulo, título, párrafos, imagen opcional, lista y botón.
 // Lo usan los apartados nuevos que pide el cliente (site.yaml: `tipo: texto`).
 import { seccion, parrafos } from '../../data/site';
+import { altSeccion } from '../../lib/seo';
 import Seccion from '../ui/Seccion.astro';
 import Imagen from '../ui/Imagen.astro';
 import Icono from '../ui/Icono.astro';
@@ -13,7 +14,7 @@ const s = seccion(Astro.props.id);
   s && (
     <Seccion id={Astro.props.id}>
       <div class:list={['grid items-start gap-12', s.imagen ? 'md:grid-cols-2 md:gap-16' : 'max-w-3xl']}>
-        {s.imagen && <Imagen src={s.imagen} alt="" ancho={1000} alto={750} class="aspect-[4/3] w-full rounded-2xl object-cover" />}
+        {s.imagen && <Imagen src={s.imagen} alt={altSeccion(s)} ancho={1000} alto={750} class="aspect-[4/3] w-full rounded-2xl object-cover" />}
         <div>
           {s.antetitulo && <p class="antetitulo">{s.antetitulo}</p>}
           {s.titulo && <h2 class="titulo-seccion">{s.titulo}</h2>}
