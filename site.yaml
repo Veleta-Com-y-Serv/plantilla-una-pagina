@@ -64,10 +64,38 @@ secciones:
     titulo: Lo que instalamos
     texto: "Para casas, comunidades de vecinos y empresas."
     items:
-      - { titulo: Autoconsumo para viviendas, texto: "De 6 a 12 paneles, con o sin batería. Compensación de excedentes." }
-      - { titulo: Comunidades de vecinos, texto: "Autoconsumo compartido: cada vecino ahorra según su cuota." }
-      - { titulo: Naves e industria, texto: "Instalaciones de 20 a 500 kW con estudio de amortización." }
-      - { titulo: Baterías y cargadores, texto: "Guarda la energía para la noche y carga tu coche eléctrico." }
+      - titulo: Autoconsumo para viviendas
+        texto: "De 6 a 12 paneles, con o sin batería. Compensación de excedentes."
+        detalle: |
+          Es la instalación más habitual: paneles en la cubierta de tu casa, un inversor y la conexión con tu cuadro eléctrico. Empezamos con el estudio por satélite y el análisis de tu factura para dimensionar la instalación a tu consumo real, sin pasarnos ni quedarnos cortos.
+
+          El equipo propio monta las placas en un día en la mayoría de viviendas. Después tramitamos los permisos, la legalización y la compensación de excedentes con tu comercializadora, de modo que lo que no gastas en casa se descuenta de tu factura.
+
+          Puedes añadir batería desde el principio o dejar la instalación preparada para hacerlo más adelante. Con la app de seguimiento ves en el móvil cuánto produces, cuánto consumes y cuánto ahorras, y la revisión anual de los primeros años va incluida.
+      - titulo: Comunidades de vecinos
+        texto: "Autoconsumo compartido: cada vecino ahorra según su cuota."
+        detalle: |
+          Pensado para bloques y urbanizaciones que quieren ahorrar en los gastos comunes y en las viviendas. Las placas se instalan en la cubierta o en una zona común y la energía se reparte entre los vecinos que se apuntan, cada uno según su cuota.
+
+          Empezamos por explicarlo en una junta, con el estudio y el presupuesto cerrados sobre la mesa, para que todos entiendan qué se instala y qué se ahorra. Nos encargamos del acuerdo de reparto, de los permisos y de las ayudas a las que pueda optar la comunidad.
+
+          Cada vecino mantiene su contrato y su comercializadora, y la energía compartida se refleja en su factura. Quien no quiera participar no pone nada, y quien se anime después puede incorporarse. Mientras la instalación funciona, la comunidad dispone de un panel claro con la producción y el reparto.
+      - titulo: Naves e industria
+        texto: "Instalaciones de 20 a 500 kW con estudio de amortización."
+        detalle: |
+          Para empresas con consumo diurno alto: naves, talleres, almacenes y explotaciones. Aprovechamos la cubierta para producir justo cuando la actividad está en marcha, de modo que gran parte de la energía se consume en el propio centro de trabajo.
+
+          El trabajo arranca con una visita técnica y el estudio de amortización, con tu curva de consumo y el presupuesto cerrado. Calculamos la estructura, la potencia del inversor y la protección que exige cada instalación, y organizamos el montaje para no parar tu actividad.
+
+          Gestionamos la legalización, la bonificación del impuesto municipal que corresponda y las ayudas disponibles. Una vez en marcha, la monitorización te permite controlar la producción y detectar cualquier incidencia a tiempo, con revisiones periódicas de nuestro equipo.
+      - titulo: Baterías y cargadores
+        texto: "Guarda la energía para la noche y carga tu coche eléctrico."
+        detalle: |
+          Si gastas más por la tarde y por la noche, o quieres cargar el coche eléctrico en casa, una batería y un punto de recarga completan la instalación. La batería guarda lo que producen tus paneles durante el día y lo devuelve cuando lo necesitas.
+
+          En el estudio te decimos con franqueza si te compensa o si te basta con la compensación de excedentes. No vendemos más capacidad de la que vas a aprovechar. Si la instalación ya existe, comprobamos que el inversor admita la batería y la ampliamos sin rehacer lo que funciona.
+
+          El cargador se instala con su protección en tu garaje o plaza, y se puede programar para cargar con la energía de tus paneles. Dejamos todo configurado y te explicamos cómo usarlo desde el móvil.
 
   cta:
     activa: true

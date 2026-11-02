@@ -1,0 +1,174 @@
+---
+// Ficha de un elemento con `detalle` (src/lib/paginas.ts, listas de src/data/fichas.ts): /servicios/<slug>/.
+// Diseño «moderno oscuro»: fondo de la plantilla, antetítulo y palabra final del titular en degradado, hero con foto
+// o, sin foto, un icono grande en tarjeta de cristal; el `detalle` en columna de lectura con la tabla de datos y la
+// caja de contacto en tarjetas de cristal al lado; galería y otros elementos de la lista en tarjetas de cristal.
+import Base from '../../layouts/Base.astro';
+import Seccion from '../../components/ui/Seccion.astro';
+import Imagen from '../../components/ui/Imagen.astro';
+import Icono from '../../components/ui/Icono.astro';
+import Titular from '../../components/ui/Titular.astro';
+import { seccion, site, tel, whatsapp } from '../../data/site';
+import { fichas, relacionadas, resumen } from '../../lib/paginas';
+import type { Ficha } from '../../lib/paginas';
+import { altGaleria, jsonLdFicha, jsonLdMigas, urlBase } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return fichas().map((f) => ({ params: { coleccion: f.def.ruta, slug: f.slug }, props: { f } }));
+}
+
+interface Props { f: Ficha }
+const { f } = Astro.props;
+const base = urlBase(Astro.site);
+const nombreSeccion = String(f.seccion.antetitulo || f.seccion.titulo || f.def.nombre).trim();
+const migas = [
+  { nombre: 'Inicio', ruta: '/' },
+  { nombre: nombreSeccion, ruta: `/#${f.idSeccion}` },
+  { nombre: f.titulo, ruta: f.url },
+];
+const palabras = f.titulo.split(' ');
+const final = palabras.length > 2 ? palabras.slice(-1).join(' ') : '';
+const inicio = final ? palabras.slice(0, -1).join(' ') + ' ' : f.titulo;
+const c = site.contacto;
+const contacto = seccion('contacto') ? '/#contacto' : site.boton_cabecera?.url || '/#contacto';
+const textoContacto = site.boton_cabecera?.texto || 'Pide presupuesto';
+const wa = whatsapp(c.whatsapp, `Hola, quiero información sobre ${f.titulo}`);
+const datos = f.datos.filter((d) => d.clave !== 'precio');
+const otras = relacionadas(f, 3);
+const descripcion = resumen(f.texto || f.detalle[0] || '');
+---
+
+<Base titulo={f.titulo} descripcion={descripcion} imagen={f.imagen} ld={[jsonLdMigas(base, migas), jsonLdFicha(base, f)]}>
+  <Seccion class="ficha-cabeza">
+    <nav aria-label="Migas de pan" class="migas">
+      <ol>
+        {migas.map((m, i) => (
+          <li>{i < migas.length - 1 ? <a href={m.ruta}>{m.nombre}</a> : <span aria-current="page">{m.nombre}</span>}</li>
+        ))}
+      </ol>
+    </nav>
+    <div class:list={['ficha-hero', { 'ficha-hero--sin-foto': !f.imagen }]}>
+      <div class="ficha-hero-texto">
+        <p class="antetitulo">{f.categoria || f.def.nombre}</p>
+        <h1 class="titulo-seccion">{inicio}{final && <span class="degradado-texto">{final}</span>}</h1>
+        {f.texto && <p class="titular-texto">{f.texto}</p>}
+        {f.precio && <p class="ficha-precio">{f.precio}</p>}
+        <div class="ficha-botones">
+          <a class="btn" href={contacto}>{textoContacto}</a>
+          {wa && <a class="btn-sec" href={wa} target="_blank" rel="noopener"><Icono nombre="whatsapp" tam={18} /> WhatsApp</a>}
+        </div>
+      </div>
+      {f.imagen ? (
+        <div class="ficha-foto">
+          <Imagen src={f.imagen} alt={f.titulo} ancho={1200} alto={900} prioridad class="h-full w-full object-cover" />
+        </div>
+      ) : (
+        <div class="ficha-icono cristal" aria-hidden="true"><Icono nombre={f.icono || 'sol'} tam={96} /></div>
+      )}
+    </div>
+  </Seccion>
+
+  <Seccion contenedor="ficha-cuerpo">
+    <article class="ficha-detalle">
+      {f.detalle.map((p) => <p>{p}</p>)}
+    </article>
+    <aside class="ficha-lado">
+      {(datos.length > 0 || f.precio) && (
+        <div class="ficha-datos cristal">
+          <h2 class="ficha-lado-titulo">En pocas palabras</h2>
+          <dl>
+            {f.precio && <div><dt>Precio</dt><dd class="ficha-precio">{f.precio}</dd></div>}
+            {datos.map((d) => <div><dt>{d.etiqueta}</dt><dd>{d.valor}</dd></div>)}
+          </dl>
+        </div>
+      )}
+      <div class="ficha-contacto cristal">
+        <p class="ficha-contacto-titulo">¿Hablamos de tu tejado?</p>
+        <p class="opacity-70">Te contamos cómo sería en tu caso, con el presupuesto cerrado y sin compromiso.</p>
+        <a class="btn" href={contacto}>{textoContacto}</a>
+        {c.telefono && <a class="ficha-tel" href={tel(c.telefono)}><Icono nombre="telefono" tam={18} /> {c.telefono}</a>}
+      </div>
+    </aside>
+  </Seccion>
+
+  {f.imagenes.length > 0 && (
+    <Seccion etiqueta={`Fotos de ${f.titulo}`}>
+      <ul class="ficha-galeria">
+        {f.imagenes.map((src, i) => (
+          <li><Imagen src={src} alt={`${f.titulo}: ${altGaleria(i).toLowerCase()}`} ancho={800} alto={600} class="h-full w-full object-cover" /></li>
+        ))}
+      </ul>
+    </Seccion>
+  )}
+
+  {otras.length > 0 && (
+    <Seccion>
+      <Titular antetitulo={nombreSeccion} titulo="Otros servicios" />
+      <ul class="ficha-otras">
+        {otras.map((o) => (
+          <li class="ficha-otra cristal">
+            <span class="ficha-otra-icono"><Icono nombre={o.icono || 'sol'} tam={24} /></span>
+            <h3><a href={o.url} class="ficha-otra-enlace">{o.titulo}</a></h3>
+            {o.texto && <p>{o.texto}</p>}
+            <p class="ficha-otra-pie">
+              {o.precio && <span class="ficha-precio">{o.precio}</span>}
+              <span class="ficha-otra-ver" aria-hidden="true">Ver más <Icono nombre="flecha" tam={16} /></span>
+            </p>
+          </li>
+        ))}
+      </ul>
+      <p class="mt-10"><a class="btn-sec" href={`/#${f.idSeccion}`}>Ver todos los servicios</a></p>
+    </Seccion>
+  )}
+</Base>
+
+<style>
+  .ficha-cabeza { padding-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .migas ol { display: flex; flex-wrap: wrap; gap: .25rem .5rem; font-size: .9rem; font-weight: 650; }
+  .migas li { display: inline-flex; align-items: center; gap: .5rem; min-width: 0; }
+  .migas li + li::before { content: "›"; opacity: .5; }
+  .migas a { color: var(--c-acento); text-decoration: none; min-height: 2.75rem; display: inline-flex; align-items: center; }
+  .migas a:hover { text-decoration: underline; }
+  .migas [aria-current] { opacity: .7; overflow-wrap: anywhere; }
+  .ficha-hero { display: grid; gap: 2.5rem; margin-top: clamp(.5rem, 2vw, 1.5rem); align-items: center; }
+  .ficha-hero-texto .titulo-seccion { font-size: clamp(2.3rem, 7vw, 4.5rem); overflow-wrap: anywhere; }
+  .ficha-precio { font-family: var(--fuente-titulos); font-weight: 800; font-size: 1.25rem; color: var(--c-acento); }
+  .ficha-hero-texto .ficha-precio { margin-top: 1.25rem; }
+  .ficha-botones { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+  .ficha-botones a, .ficha-contacto .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; }
+  .ficha-foto { aspect-ratio: 4 / 3; border-radius: 1.5rem; overflow: hidden; border: 1px solid color-mix(in srgb, var(--c-texto) 10%, transparent); }
+  .ficha-icono { display: grid; place-items: center; aspect-ratio: 4 / 3; color: var(--c-primario); }
+  :global(.ficha-cuerpo) { display: grid; gap: 3rem; }
+  .ficha-detalle { max-width: 44rem; font-size: 1.12rem; }
+  .ficha-detalle p { opacity: .85; }
+  .ficha-detalle p + p { margin-top: 1.2rem; }
+  .ficha-detalle p:first-child { font-size: 1.25rem; opacity: 1; }
+  .ficha-lado { display: grid; gap: 1.5rem; align-content: start; }
+  .ficha-lado-titulo { font-size: 1.25rem; margin-bottom: 1rem; }
+  .ficha-datos, .ficha-contacto { padding: 1.5rem; }
+  .ficha-datos dl > div { display: flex; justify-content: space-between; gap: 1rem; padding: .8rem 0; border-top: 1px solid color-mix(in srgb, var(--c-texto) 10%, transparent); }
+  .ficha-datos dt { font-weight: 700; opacity: .65; }
+  .ficha-datos dd { text-align: right; font-weight: 650; min-width: 0; overflow-wrap: anywhere; }
+  .ficha-contacto { display: grid; gap: .9rem; }
+  .ficha-contacto-titulo { font-family: var(--fuente-titulos); font-size: 1.5rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+  .ficha-tel { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; font-weight: 750; color: var(--c-acento); text-decoration: none; }
+  .ficha-galeria { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); }
+  .ficha-galeria li { aspect-ratio: 4 / 3; border-radius: 1.5rem; overflow: hidden; }
+  .ficha-otras { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); }
+  .ficha-otra { position: relative; display: flex; flex-direction: column; gap: .7rem; padding: 1.5rem; transition: border-color .2s ease; }
+  .ficha-otra:hover { border-color: var(--c-primario); }
+  .ficha-otra-icono { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: .8rem; background: var(--degradado); color: #0b1020; }
+  .ficha-otra h3 { font-size: 1.35rem; margin-top: .35rem; }
+  .ficha-otra-enlace { text-decoration: none; color: inherit; }
+  .ficha-otra-enlace::after { content: ""; position: absolute; inset: 0; border-radius: 1.5rem; }
+  .ficha-otra-enlace:focus-visible { outline: none; }
+  .ficha-otra:has(.ficha-otra-enlace:focus-visible) { outline: 2px solid var(--c-acento); outline-offset: 2px; }
+  .ficha-otra p { opacity: .7; }
+  .ficha-otra-pie { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: auto; padding-top: .5rem; opacity: 1 !important; }
+  .ficha-otra-ver { display: inline-flex; align-items: center; gap: .3rem; font-weight: 750; color: var(--c-acento); }
+  @media (min-width: 1024px) {
+    .ficha-hero { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 4rem; }
+    :global(.ficha-cuerpo) { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 5rem; align-items: start; }
+    .ficha-lado { position: sticky; top: 6.5rem; }
+  }
+</style>

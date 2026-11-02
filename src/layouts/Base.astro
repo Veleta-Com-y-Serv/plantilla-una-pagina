@@ -5,10 +5,10 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
-import { altHero, canonica, imagenCompartir, indexable, jsonLdNegocio, jsonLdPreguntas, jsonSeguro, urlBase } from '../lib/seo';
+import { altHero, canonica, imagenCompartir, imagenCompartirDe, indexable, jsonLdNegocio, jsonLdPreguntas, jsonSeguro, urlBase } from '../lib/seo';
 
-interface Props { titulo?: string; descripcion?: string }
-const { titulo, descripcion } = Astro.props;
+interface Props { titulo?: string; descripcion?: string; imagen?: string; ld?: (Record<string, unknown> | null)[] }
+const { titulo, descripcion, imagen: foto, ld: ldPagina = [] } = Astro.props;
 
 const VARIANTE_CABECERA = 'flotante';
 const VARIANTE_PIE = 'moderno';
@@ -20,7 +20,7 @@ const variables = `--c-primario:${c.primario};--c-acento:${c.acento};--c-fondo:$
 // SEO de base (src/lib/seo.ts): dirección canónica (seo.url o SITE_URL), foto para compartir, indexación y JSON-LD.
 const base = urlBase(Astro.site);
 const canonical = canonica(Astro.url.pathname, base);
-const imagen = imagenCompartir(base);
+const imagen = foto ? imagenCompartirDe(foto, base) : imagenCompartir(base);
 const ld = jsonLdNegocio(base, 'LocalBusiness');
 const ldPreguntas = Astro.url.pathname === '/' ? jsonLdPreguntas() : null;
 ---
@@ -43,10 +43,11 @@ const ldPreguntas = Astro.url.pathname === '/' ? jsonLdPreguntas() : null;
     <meta property="og:site_name" content={site.nombre} />
     {canonical && <meta property="og:url" content={canonical} />}
     {imagen && <meta property="og:image" content={imagen} />}
-    {imagen && <meta property="og:image:alt" content={altHero()} />}
+    {imagen && <meta property="og:image:alt" content={foto && titulo ? titulo : altHero()} />}
     <meta name="twitter:card" content={imagen ? 'summary_large_image' : 'summary'} />
     <script type="application/ld+json" set:html={jsonSeguro(ld)} />
     {ldPreguntas && <script type="application/ld+json" set:html={jsonSeguro(ldPreguntas)} />}
+    {ldPagina.filter(Boolean).map((o) => <script type="application/ld+json" set:html={jsonSeguro(o)} />)}
   </head>
   <body>
     <a class="saltar" href="#contenido">Saltar al contenido</a>

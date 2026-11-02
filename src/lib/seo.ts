@@ -1,11 +1,13 @@
-// SEO y GEO de base (NoExpertise). Mismo fichero en las 16 plantillas: no lo cambies en una sola.
-// Todo sale de site.yaml: metas de Base.astro, JSON-LD (negocio local y preguntas frecuentes),
-// robots.txt, sitemap.xml, llms.txt y los `alt` derivados del contenido. Nunca inventa datos:
-// lo que no está en site.yaml no sale.
+// SEO y GEO de base (NoExpertise). Mismo fichero en todas las plantillas: no lo cambies en una sola.
+// Todo sale de site.yaml: metas de Base.astro, JSON-LD (negocio local, preguntas frecuentes, fichas y
+// zonas), robots.txt, sitemap.xml, llms.txt y los `alt` derivados del contenido. Nunca inventa datos:
+// lo que no está en site.yaml no sale. Las páginas propias (fichas y zonas) salen de src/lib/paginas.ts.
 //
 // `seo.url` y `seo.indexable` los escribe la plataforma (el cliente no los edita). Si faltan (webs
 // generadas antes), la dirección es la de `Astro.site` (SITE_URL del build) y la web es indexable.
 import { site } from '../data/site';
+import { enlaceDe, fichas, resumen, tituloZona, zonasConPagina } from './paginas';
+import type { Ficha, Zona } from './paginas';
 
 type Crudo = Record<string, any>;
 const S = site as unknown as Crudo;
@@ -62,6 +64,10 @@ const esFoto = (ruta: string) => !!ruta && !/\.svg(\?|#|$)/i.test(ruta);
 
 /** Imagen para og:image (absoluta), o '' si no hay foto o no se sabe la dirección de la web. */
 export const imagenCompartir = (base: string): string => (esFoto(imagenHero()) ? absoluta(imagenHero(), base) : '');
+
+/** Imagen para og:image de una página propia: su foto (absoluta) o, si no es una foto, la de la portada. */
+export const imagenCompartirDe = (ruta: string | undefined, base: string): string =>
+  esFoto(texto(ruta)) ? absoluta(ruta, base) : imagenCompartir(base);
 
 /** `alt` de la foto de portada: nombre y eslogan. */
 export function altHero(): string {
@@ -235,7 +241,7 @@ const NO_SON_OFERTA = new Set([
 /** Listas que nunca son la oferta, en cualquier sección. */
 const LISTAS_FUERA = new Set(['personas', 'testimonios', 'opiniones', 'preguntas', 'horario', 'clases_horario', 'hitos', 'noticias', 'galeria', 'menu']);
 
-export interface Elemento { nombre: string; precio: string; texto: string; grupo: string }
+export interface Elemento { nombre: string; precio: string; texto: string; grupo: string; url: string }
 export interface Coleccion { titulo: string; elementos: Elemento[] }
 
 /**
@@ -261,6 +267,7 @@ export function colecciones(): Coleccion[] {
           precio: precio && texto(e.periodo) ? `${precio} · ${texto(e.periodo)}` : precio,
           texto: unaLinea(texto(e.texto) || (incluye && `Incluye: ${incluye}`)),
           grupo: texto(e.categoria),
+          url: enlaceDe(e),
         });
       }
       if (elementos.length) out.push({ titulo: sinPunto(texto(s.titulo)) || id, elementos });
@@ -321,6 +328,64 @@ export function jsonLdPreguntas(): Crudo | null {
   };
 }
 
+/** JSON-LD BreadcrumbList: Inicio › … (cada paso con su ruta: «/», «/#tratamientos», «/tratamientos/limpieza/»). */
+export function jsonLdMigas(base: string, pasos: { nombre: string; ruta: string }[]): Crudo | null {
+  if (!base) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: pasos.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.nombre, item: base + p.ruta })),
+  };
+}
+
+/**
+ * Oferta de schema.org a partir del precio escrito («45 €», «desde 290 €», «1.250,50 €»). Solo con un
+ * importe en euros y nada más (sin «/mes», «por pieza»…): si no, ninguna (el precio sale en la ficha).
+ */
+export function ofertaDe(precio: string, url: string): Crudo | null {
+  const m = sinTildes(texto(precio)).match(/^(desde\s+)?(\d{1,3}(?:\.\d{3})+|\d+)(?:,(\d{1,2}))?\s*(?:€|eur|euros)$/);
+  if (!m) return null;
+  const importe = m[2].replace(/\./g, '') + (m[3] ? '.' + m[3].padEnd(2, '0') : '');
+  return m[1]
+    ? { '@type': 'AggregateOffer', lowPrice: importe, priceCurrency: 'EUR', ...(url && { url }) }
+    : { '@type': 'Offer', price: importe, priceCurrency: 'EUR', ...(url && { url }) };
+}
+
+/** JSON-LD de una ficha (`Service` por defecto, o el `tipo` de su lista: Product, Course…), con su oferta si hay precio. */
+export function jsonLdFicha(base: string, f: Ficha): Crudo {
+  const url = base ? base + f.url : '';
+  const tipo = texto(f.def.tipo) || 'Service';
+  const imagenes = [f.imagen, ...f.imagenes].filter(esFoto).map((r) => absoluta(r, base)).filter(Boolean);
+  const oferta = ofertaDe(f.precio, url);
+  const negocio = base ? { '@id': base + '/#negocio' } : { '@type': texto(S.seo?.tipo) || 'LocalBusiness', name: texto(S.nombre) };
+  return {
+    '@context': 'https://schema.org',
+    '@type': tipo,
+    name: f.titulo,
+    ...(f.texto || f.detalle[0] ? { description: resumen(f.texto || f.detalle[0], 300) } : {}),
+    ...(url && { url }),
+    ...(imagenes.length && { image: imagenes.length === 1 ? imagenes[0] : imagenes }),
+    ...(f.categoria && { category: f.categoria }),
+    ...(tipo === 'Product' ? { brand: { '@type': 'Brand', name: texto(S.nombre) } } : { provider: negocio }),
+    ...(tipo === 'Service' && zonas().length ? { areaServed: zonas() } : {}),
+    ...(oferta && { offers: oferta }),
+  };
+}
+
+/** JSON-LD de la página de una zona: el servicio del negocio en esa zona (`areaServed`). */
+export function jsonLdZona(base: string, z: Zona): Crudo {
+  const url = base ? base + z.url : '';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: tituloZona(z),
+    ...(z.texto[0] && { description: resumen(z.texto[0], 300) }),
+    ...(url && { url }),
+    provider: base ? { '@id': base + '/#negocio' } : { '@type': texto(S.seo?.tipo) || 'LocalBusiness', name: texto(S.nombre) },
+    areaServed: { '@type': 'Place', name: z.nombre },
+  };
+}
+
 /** JSON listo para un <script type="application/ld+json"> (sin «</script>» posible dentro). */
 export const jsonSeguro = (o: unknown): string => JSON.stringify(o).replace(/</g, '\\u003c');
 
@@ -341,6 +406,10 @@ export function rutasDePaginas(ficheros: string[]): string[] {
     .map((n) => (n === 'index' ? '/' : `/${n}/`));
   return [...new Set(rutas)].sort((a, b) => (a === '/' ? -1 : b === '/' ? 1 : a.localeCompare(b)));
 }
+
+/** Rutas de las fichas (/<ruta>/<slug>/) y de las páginas por zona, para el sitemap. */
+export const rutasDeFichas = (): string[] => fichas().map((f) => f.url);
+export const rutasDeZonas = (): string[] => zonasConPagina().map((z) => z.url);
 
 const xml = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -385,8 +454,16 @@ export function llmsTxt(base: string): string {
     l.push(`## ${col.titulo}`, '');
     for (const e of col.elementos) {
       const cabeza = e.grupo && sinTildes(e.grupo) !== sinTildes(col.titulo) ? `${e.nombre} (${e.grupo})` : e.nombre;
-      l.push(`- ${cabeza}${e.precio ? `: ${e.precio}` : ''}${e.texto ? ` — ${e.texto}` : ''}`);
+      const pagina = base && e.url ? ` (${base}${e.url})` : '';
+      l.push(`- ${cabeza}${e.precio ? `: ${e.precio}` : ''}${e.texto ? ` — ${e.texto}` : ''}${pagina}`);
     }
+    l.push('');
+  }
+
+  const porZona = zonasConPagina();
+  if (porZona.length) {
+    l.push('## Dónde trabaja', '');
+    for (const z of porZona) l.push(`- ${tituloZona(z)}${base ? ` (${base}${z.url})` : ''} — ${resumen(z.texto[0] ?? '', 200)}`);
     l.push('');
   }
 
