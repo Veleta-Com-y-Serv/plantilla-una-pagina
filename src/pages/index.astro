@@ -1,9 +1,12 @@
 ---
-// Página principal: pinta las secciones activas de site.yaml, en su orden.
+// Inicio: pinta las secciones activas de site.yaml, en su orden. Con varias páginas (`paginas:` en site.yaml,
+// src/lib/multipagina.ts), solo las que no están en ninguna página; el resto sale en src/pages/[...pagina].astro.
 // Cada sección es src/components/secciones/<id>.astro, o la de su `tipo` si lo lleva (apartados nuevos:
 // `tipo: texto`, `tipo: servicios`…, con su propio id como ancla). Para quitar una: `activa: false`.
+// Mismo fichero en todas las plantillas: no lo cambies en una sola.
 import Base from '../layouts/Base.astro';
-import { seccionesActivas, site } from '../data/site';
+import { site } from '../data/site';
+import { seccionesDe } from '../lib/multipagina';
 
 const modulos = import.meta.glob<{ default: any }>('../components/secciones/*.astro', { eager: true });
 const componentes: Record<string, any> = {};
@@ -12,7 +15,7 @@ const disenyo = (id: string) => {
   const t = site.secciones[id]?.tipo;
   return typeof t === 'string' && componentes[t] ? t : id;
 };
-const ids = seccionesActivas().filter((id) => componentes[disenyo(id)]);
+const ids = seccionesDe('/').filter((id) => site.secciones[id]?.activa && componentes[disenyo(id)]);
 ---
 
 <Base>

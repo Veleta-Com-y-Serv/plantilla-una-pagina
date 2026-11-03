@@ -1,13 +1,15 @@
 // SEO y GEO de base (NoExpertise). Mismo fichero en todas las plantillas: no lo cambies en una sola.
 // Todo sale de site.yaml: metas de Base.astro, JSON-LD (negocio local, preguntas frecuentes, fichas y
 // zonas), robots.txt, sitemap.xml, llms.txt y los `alt` derivados del contenido. Nunca inventa datos:
-// lo que no está en site.yaml no sale. Las páginas propias (fichas y zonas) salen de src/lib/paginas.ts.
+// lo que no está en site.yaml no sale. Las páginas propias (fichas y zonas) salen de src/lib/paginas.ts y las
+// páginas de una web de varias páginas (`paginas:`), de src/lib/multipagina.ts.
 //
 // `seo.url` y `seo.indexable` los escribe la plataforma (el cliente no los edita). Si faltan (webs
 // generadas antes), la dirección es la de `Astro.site` (SITE_URL del build) y la web es indexable.
 import { site } from '../data/site';
 import { enlaceDe, fichas, resumen, tituloZona, zonasConPagina } from './paginas';
 import type { Ficha, Zona } from './paginas';
+import { multipagina, paginaDeSeccion, paginas as paginasWeb, rutaNormalizada } from './multipagina';
 
 type Crudo = Record<string, any>;
 const S = site as unknown as Crudo;
@@ -218,11 +220,16 @@ export function zonas(): string[] {
 
 export interface Pregunta { pregunta: string; respuesta: string }
 
-/** Preguntas de las secciones de preguntas activas (`preguntas` o `tipo: preguntas`) con pregunta y respuesta. */
-export function preguntas(): Pregunta[] {
+/**
+ * Preguntas de las secciones de preguntas activas (`preguntas` o `tipo: preguntas`) con pregunta y respuesta.
+ * Con `ruta` («/», «/contacto/»), solo las de las secciones que se pintan en esa página.
+ */
+export function preguntas(ruta?: string): Pregunta[] {
   const out: Pregunta[] = [];
+  const en = ruta === undefined ? '' : rutaNormalizada(ruta);
   for (const [id, s] of Object.entries((S.secciones ?? {}) as Record<string, Crudo>)) {
     if (!s?.activa || disenyo(id, s) !== 'preguntas' || !Array.isArray(s.preguntas)) continue;
+    if (en && paginaDeSeccion(id) !== en) continue;
     for (const p of s.preguntas) {
       const pregunta = texto(p?.pregunta), respuesta = texto(p?.respuesta);
       if (pregunta && respuesta) out.push({ pregunta, respuesta });
@@ -317,9 +324,14 @@ export function jsonLdNegocio(base: string, tipoPorDefecto = 'LocalBusiness'): C
   };
 }
 
-/** JSON-LD FAQPage con las preguntas frecuentes, o null si no hay ninguna. */
-export function jsonLdPreguntas(): Crudo | null {
-  const p = preguntas();
+/**
+ * JSON-LD FAQPage con las preguntas frecuentes, o null si no hay ninguna. Con `ruta` (Base.astro le pasa
+ * `Astro.url.pathname`), solo en la página donde está la sección de preguntas: Inicio en una web de una página
+ * o la página que la lleve en una de varias; en las demás (fichas, zonas, aviso legal), null.
+ */
+export function jsonLdPreguntas(ruta?: string): Crudo | null {
+  if (ruta !== undefined && !multipagina() && rutaNormalizada(ruta) !== '/') return null;
+  const p = preguntas(ruta);
   if (!p.length) return null;
   return {
     '@context': 'https://schema.org',
@@ -410,6 +422,8 @@ export function rutasDePaginas(ficheros: string[]): string[] {
 /** Rutas de las fichas (/<ruta>/<slug>/) y de las páginas por zona, para el sitemap. */
 export const rutasDeFichas = (): string[] => fichas().map((f) => f.url);
 export const rutasDeZonas = (): string[] => zonasConPagina().map((z) => z.url);
+/** Rutas de las páginas de una web de varias páginas (/servicios/, /contacto/…), para el sitemap. */
+export const rutasDeSecciones = (): string[] => paginasWeb().map((p) => p.url);
 
 const xml = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -449,6 +463,8 @@ export function llmsTxt(base: string): string {
 
   const horario = lineasHorario();
   if (horario.length) l.push('## Horario', '', ...horario.map((x) => `- ${unaLinea(x)}`), '');
+
+  if (base && multipagina()) l.push('## Páginas de la web', '', ...paginasWeb().map((x) => `- ${x.titulo}: ${base}${x.url}`), '');
 
   for (const col of colecciones()) {
     l.push(`## ${col.titulo}`, '');

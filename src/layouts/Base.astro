@@ -22,7 +22,7 @@ const base = urlBase(Astro.site);
 const canonical = canonica(Astro.url.pathname, base);
 const imagen = foto ? imagenCompartirDe(foto, base) : imagenCompartir(base);
 const ld = jsonLdNegocio(base, 'LocalBusiness');
-const ldPreguntas = Astro.url.pathname === '/' ? jsonLdPreguntas() : null;
+const ldPreguntas = jsonLdPreguntas(Astro.url.pathname);
 ---
 
 <!doctype html>

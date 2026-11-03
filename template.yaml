@@ -12,7 +12,7 @@ secciones:
   - { id: contacto, nombre: Contacto }
 estilo: moderno
 plan_minimo: gratis
-version: 1.5.0
+version: 1.6.0
 base: astrowind
 demo_url: https://demo-plantilla-una-pagina.noexpertise.com
 activa: true
@@ -21,6 +21,13 @@ orden: 40
 # Páginas propias (docs/plantillas.md § Fichas por elemento y páginas por zona). Espejo en src/data/fichas.ts.
 fichas:
   - { lista: servicios, campo: items, ruta: servicios, nombre: Servicio, tipo: Service }
+
+# Varias páginas (docs/plantillas.md § Varias páginas): reparto recomendado al activar «Varias páginas».
+# Inicio se queda con la portada y lo que no esté en ninguna página (aquí, llamada a la acción).
+paginas:
+  - { ruta: servicios, titulo: Servicios, secciones: "servicios" }
+  - { ruta: por-que-nosotros, titulo: Por qué nosotros, secciones: "ventajas" }
+  - { ruta: contacto, titulo: Contacto, secciones: "preguntas; contacto" }
 
 # Asistente de puesta en marcha (NoExpertise): un paso por pantalla. Rutas del site sin índices;
 # tipos: texto y lista (la IA propone), datos, fotos, eleccion (colores y logo) y repaso.

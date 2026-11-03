@@ -1,0 +1,40 @@
+---
+// Varias páginas (src/lib/multipagina.ts): una página por entrada de `paginas:` en site.yaml (/servicios/,
+// /contacto/…) con sus secciones en el orden de site.yaml. La primera sección hace de cabecera de la página.
+// Sin `paginas`, no genera nada. Mismo fichero en todas las plantillas: no lo cambies en una sola.
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+import { paginas } from '../lib/multipagina';
+
+export function getStaticPaths() {
+  return paginas().map((p) => ({ params: { pagina: p.ruta }, props: { ruta: p.ruta } }));
+}
+
+const { ruta } = Astro.props as { ruta: string };
+const pagina = paginas().find((p) => p.ruta === ruta)!;
+const modulos = import.meta.glob<{ default: any }>('../components/secciones/*.astro', { eager: true });
+const componentes: Record<string, any> = {};
+for (const [r, m] of Object.entries(modulos)) componentes[r.split('/').pop()!.replace('.astro', '')] = m.default;
+const disenyo = (id: string) => {
+  const t = site.secciones[id]?.tipo;
+  return typeof t === 'string' && componentes[t] ? t : id;
+};
+const ids = pagina.secciones.filter((id) => site.secciones[id]?.activa && componentes[disenyo(id)]);
+const resumen = (t: string, max = 155) => {
+  const l = t.replace(/\s+/g, ' ').trim();
+  if (l.length <= max) return l;
+  const c = l.slice(0, max - 1);
+  return c.slice(0, Math.max(c.lastIndexOf(' '), 40)).replace(/[\s.,;:]+$/, '') + '…';
+};
+const primeraConTexto = ids.map((id) => String(site.secciones[id]?.texto ?? '').trim()).find(Boolean) ?? '';
+const descripcion = resumen(String(site.secciones[ids[0]]?.texto ?? '').trim() || primeraConTexto || site.seo.descripcion);
+---
+
+<Base titulo={pagina.titulo} descripcion={descripcion}>
+  {
+    ids.map((id, i) => {
+      const Componente = componentes[disenyo(id)];
+      return <Componente id={id} primera={i === 0} />;
+    })
+  }
+</Base>
